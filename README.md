@@ -90,12 +90,23 @@ That's it. Open a PR and the diagram appears automatically.
 | `github-token` | No | Auto-provided | GitHub token for API access |
 | `model` | No | `claude-sonnet-4-20250514` | Claude model to use |
 
+## Example Diagram
+
+![CodeScope diagram example](assets/codescope-diagram-example.png)
+
 ## What the Diagram Shows
 
 - **Directory hierarchy** — Files grouped by directory using Mermaid subgraphs
-- **Color-coded nodes** — Green (added), orange (modified), red (deleted), blue (renamed)
 - **Line change counts** — Each node shows additions/deletions
 - **File relationships** — Edges between related files (same directory, test ↔ source, etc.)
+- **Color-coded nodes by modification type:**
+
+| Color | Meaning | Hex |
+|-------|---------|-----|
+| 🟢 Green | Added | `#2ea44f` |
+| 🟠 Orange | Modified | `#e36209` |
+| 🔴 Red | Deleted | `#cb2431` |
+| 🔵 Blue | Renamed | `#0366d6` |
 
 ## Graceful Degradation
 
