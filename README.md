@@ -141,10 +141,21 @@ CodeScope/
 └── pyproject.toml                    # Dependencies (uv)
 ```
 
+## Disclaimer
+
+This software is provided **"as is"**, without warranty of any kind. By using CodeScope, you acknowledge that:
+
+- **PR diff metadata** (file names, paths, line counts) is sent to the Anthropic API for analysis. No source code content is sent.
+- **You are responsible** for your own Anthropic API key and any associated costs.
+- The authors are **not liable** for any damages, incorrect diagrams, failed workflows, or issues arising from the use of this action.
+- AI-generated diagrams are approximate visualizations, not authoritative representations of your codebase.
+
+See the [LICENSE](LICENSE) file for the full MIT license terms.
+
 ## Inspiration
 
 Inspired by [Marlene Mhangami](https://github.com/marlenezw)'s work on visualizing PR changes using Excalidraw MCP and the GitHub Copilot SDK.
 
 ## License
 
-MIT
+[MIT](LICENSE)
