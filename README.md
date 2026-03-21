@@ -130,6 +130,10 @@ CodeScope/
 └── pyproject.toml                    # Dependencies (uv)
 ```
 
+## Inspiration
+
+Inspired by [Marlene Mhangami](https://github.com/marlenezw)'s work on visualizing PR changes using Excalidraw MCP and the GitHub Copilot SDK.
+
 ## License
 
 MIT
