@@ -16,7 +16,7 @@ logger = logging.getLogger("examples.services.auth")
 
 # Secret key for HMAC token signing.
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY", "dev-secret-change-me")
-TOKEN_TTL_SECONDS = 3600  # 1 hour
+TOKEN_TTL_SECONDS = 7200  # 2 hours (extended from 1h for better UX)
 
 
 def generate_token(user: User) -> str:

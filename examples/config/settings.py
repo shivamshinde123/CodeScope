@@ -16,7 +16,7 @@ class Settings:
 
     # Auth
     SECRET_KEY: str = os.getenv("AUTH_SECRET_KEY", "dev-secret-change-me")
-    TOKEN_TTL: int = int(os.getenv("TOKEN_TTL", "3600"))
+    TOKEN_TTL: int = int(os.getenv("TOKEN_TTL", "7200"))
 
     # Rate limiting
     RATE_LIMIT_MAX: int = int(os.getenv("RATE_LIMIT_MAX", "60"))
