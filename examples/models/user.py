@@ -21,6 +21,7 @@ class User:
     email: str
     name: str
     role: str = "viewer"
+    is_active: bool = True
     id: Optional[int] = None
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_login: Optional[datetime] = None

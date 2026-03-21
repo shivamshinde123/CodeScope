@@ -1,9 +1,14 @@
-"""API route definitions for the example application."""
+"""API route definitions for the example application.
+
+Provides RESTful endpoints for user registration, project CRUD, and
+a new health check endpoint for monitoring.
+"""
 
 from flask import Blueprint, jsonify, request
 
 from examples.models.user import User
 from examples.models.project import Project
+from examples.services.analytics_service import track_event
 from examples.services.auth_service import authenticate, authorize
 from examples.services.project_service import (
     create_project,
@@ -75,4 +80,11 @@ def get_single_project(current_user, project_id):
 def remove_project(current_user, project_id):
     """Delete a project (admin only)."""
     delete_project(project_id)
+    track_event("project_deleted", {"project_id": project_id})
     return jsonify({"message": "Project deleted"}), 200
+
+
+@api.route("/health", methods=["GET"])
+def health_check():
+    """Health check endpoint for monitoring."""
+    return jsonify({"status": "healthy", "version": "1.1.0"})
