@@ -1,0 +1,47 @@
+name: "CodeScope"
+description: "Automatically generate visual Mermaid diagrams for pull requests to help reviewers understand the scope of changes."
+author: "CodeScope"
+
+inputs:
+  github-token:
+    description: "GitHub token for API access (automatically provided)"
+    required: true
+    default: ${{ github.token }}
+  anthropic-api-key:
+    description: "Anthropic API key for Claude"
+    required: true
+  model:
+    description: "Claude model to use for analysis"
+    required: false
+    default: "claude-sonnet-4-20250514"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      shell: bash
+      run: uv sync
+
+    - name: Run CodeScope
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        INPUT_MODEL: ${{ inputs.model }}
+      run: uv run python src/main.py
+
+branding:
+  icon: "git-pull-request"
+  color: "purple"
