@@ -1,6 +1,6 @@
-name: "CodeScope"
+name: "CodeScope PR Visualizer"
 description: "Automatically generate visual Mermaid diagrams for pull requests to help reviewers understand the scope of changes."
-author: "CodeScope"
+author: "shivamshinde123"
 
 inputs:
   github-token:
