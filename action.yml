@@ -40,7 +40,7 @@ runs:
         GITHUB_REPOSITORY: ${{ github.repository }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
         INPUT_MODEL: ${{ inputs.model }}
-      run: cd "${{ github.action_path }}" && uv run python src/main.py
+      run: cd "${{ github.action_path }}" && PYTHONPATH="${{ github.action_path }}" uv run python src/main.py
 
 branding:
   icon: "git-pull-request"
