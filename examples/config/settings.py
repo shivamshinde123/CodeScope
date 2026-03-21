@@ -26,5 +26,21 @@ class Settings:
     ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
     CLAUDE_MODEL: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514")
 
+    # Dashboard
+    DASHBOARD_MAX_WIDGETS: int = int(os.getenv("DASHBOARD_MAX_WIDGETS", "20"))
+    DASHBOARD_REFRESH_INTERVAL: int = int(os.getenv("DASHBOARD_REFRESH_SEC", "30"))
+
+    # Audit logging
+    AUDIT_LOG_ENABLED: bool = os.getenv("AUDIT_LOG_ENABLED", "true").lower() == "true"
+    AUDIT_LOG_RETENTION_DAYS: int = int(os.getenv("AUDIT_LOG_RETENTION_DAYS", "90"))
+
+    # Database pool
+    DB_POOL_SIZE: int = int(os.getenv("DB_POOL_SIZE", "5"))
+
+    # CORS
+    CORS_ALLOWED_ORIGINS: list[str] = os.getenv(
+        "CORS_ALLOWED_ORIGINS", "http://localhost:3000,http://localhost:5173"
+    ).split(",")
+
 
 settings = Settings()

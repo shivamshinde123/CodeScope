@@ -16,6 +16,11 @@ from examples.services.project_service import (
     list_projects,
     delete_project,
 )
+from examples.services.dashboard_service import (
+    create_dashboard,
+    get_dashboard,
+    list_dashboards,
+)
 from examples.utils.validators import validate_email, validate_project_name
 from examples.utils.rate_limiter import rate_limit
 
@@ -87,4 +92,38 @@ def remove_project(current_user, project_id):
 @api.route("/health", methods=["GET"])
 def health_check():
     """Health check endpoint for monitoring."""
-    return jsonify({"status": "healthy", "version": "1.1.0"})
+    return jsonify({"status": "healthy", "version": "2.0.0"})
+
+
+# --- Dashboard endpoints ---
+
+@api.route("/dashboards", methods=["GET"])
+@authenticate
+def list_all_dashboards(current_user):
+    """List all dashboards owned by the current user."""
+    dashboards = list_dashboards(owner_id=current_user.id)
+    return jsonify([d.to_dict() for d in dashboards])
+
+
+@api.route("/dashboards", methods=["POST"])
+@authenticate
+def create_new_dashboard(current_user):
+    """Create a new dashboard."""
+    data = request.get_json()
+    dashboard = create_dashboard(
+        name=data["name"],
+        owner_id=current_user.id,
+        description=data.get("description", ""),
+    )
+    track_event("dashboard_created", {"dashboard_id": dashboard.id})
+    return jsonify(dashboard.to_dict()), 201
+
+
+@api.route("/dashboards/<int:dashboard_id>", methods=["GET"])
+@authenticate
+def get_single_dashboard(current_user, dashboard_id):
+    """Get a single dashboard by ID."""
+    dashboard = get_dashboard(dashboard_id)
+    if not dashboard:
+        return jsonify({"error": "Dashboard not found"}), 404
+    return jsonify(dashboard.to_dict())

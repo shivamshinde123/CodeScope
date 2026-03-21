@@ -33,3 +33,22 @@ def get_event_count(event_name: str) -> int:
 def get_recent_events(limit: int = 50) -> list[dict[str, Any]]:
     """Return the most recent events."""
     return _event_log[-limit:]
+
+
+def get_events_by_type(event_name: str, limit: int = 100) -> list[dict[str, Any]]:
+    """Return events filtered by type."""
+    return [e for e in _event_log if e["event"] == event_name][-limit:]
+
+
+def get_dashboard_analytics(dashboard_id: int) -> dict[str, Any]:
+    """Get aggregated analytics for a specific dashboard."""
+    dashboard_events = [
+        e for e in _event_log
+        if e.get("metadata", {}).get("dashboard_id") == dashboard_id
+    ]
+    return {
+        "dashboard_id": dashboard_id,
+        "total_events": len(dashboard_events),
+        "event_types": list({e["event"] for e in dashboard_events}),
+        "last_activity": dashboard_events[-1]["timestamp"] if dashboard_events else None,
+    }
