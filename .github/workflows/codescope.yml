@@ -1,4 +1,4 @@
-name: CodeScope PR Visualizer
+name: CodeScope merge readiness
 
 on:
   pull_request:
@@ -8,13 +8,20 @@ permissions:
   contents: read
   pull-requests: write
 
-jobs:
-  visualize:
-    name: Generate PR Diagram
-    runs-on: ubuntu-latest
+concurrency:
+  group: codescope-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
+jobs:
+  analyze:
+    name: Analyze merge readiness
+    runs-on: ubuntu-latest
     steps:
-      - name: Run CodeScope
-        uses: shivamshinde123/CodeScope@master
+      - name: Check out pull request without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run CodeScope
+        uses: ./

@@ -1,47 +1,63 @@
 # CodeScope
 
-A GitHub Action that automatically generates visual Mermaid diagrams for pull requests, helping reviewers understand the scope of changes at a glance.
+**Website:** [shivamshinde123.github.io/CodeScope](https://shivamshinde123.github.io/CodeScope/)
 
-## How It Works
+CodeScope is a GitHub Action that gives pull-request reviewers an evidence-backed merge-readiness brief. It analyzes repository text and Git history without importing or executing pull-request code.
 
+Version 2 focuses on four reviewer decisions:
+
+- **Blast radius:** Which production files depend on the changed code?
+- **Test evidence:** Which tests map to each changed production file?
+- **Architecture drift:** Did the pull request add a forbidden dependency or a dependency cycle?
+- **Merge readiness:** What deserves human attention before approval?
+
+The result is one stable pull-request comment with a compact text summary and an optional Mermaid impact diagram. CodeScope is advisory: a clean result does not prove that a change is safe.
+
+## Reviewer output
+
+```text
+CodeScope merge readiness
+Missing required evidence
+
+Blast radius
+- src/service.py depends on changed src/core.py
+
+Test evidence
+- src/core.py: no mapped test
+
+Architecture rules
+- src/ui.py now imports src/data.py, violating layers
+
+Recommended actions
+- Add or map a test for src/core.py
+- Replace the forbidden dependency or document an approved exception
 ```
-PR Opened/Updated
-       │
-       ▼
-  Fetch PR diff (GitHub API)
-       │
-       ▼
-  Parse diff (Python + unidiff)
-  → file names, paths, mod types, line counts
-       │
-       ▼
-  Analyze with Claude (Anthropic API)
-  → relationships, impact zones, Mermaid diagram
-       │
-       ▼
-  Post diagram as PR comment
-  (updates existing comment on re-runs)
-```
 
-1. **Diff parsing** — Fetches the PR diff via GitHub API and parses it with `unidiff` to extract structured metadata (file paths, modification types, line counts).
-2. **Claude analysis** — Sends the structured data to Claude, which analyzes file relationships and generates a color-coded Mermaid flowchart diagram.
-3. **PR comment** — Posts the diagram as an automated comment on the PR. Re-runs update the existing comment instead of creating duplicates.
+When dependency paths exist, CodeScope also includes a collapsed Mermaid diagram. The text tables remain the accessible source of evidence; the diagram never carries meaning by color alone.
 
-## Quick Start — Use CodeScope in Your Repo
+## Supported analysis
 
-### Step 1: Add the Anthropic API key as a repository secret
+CodeScope v2 extracts repository-local imports from:
 
-Go to your repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+- Python files
+- JavaScript files
+- TypeScript files
+- JSX and TSX files
 
-- Name: `ANTHROPIC_API_KEY`
-- Value: Your Anthropic API key (get one at [console.anthropic.com](https://console.anthropic.com))
+The analysis is intentionally bounded:
 
-### Step 2: Create the workflow file
+- Files larger than 1 MB are skipped.
+- At most 5,000 supported source files are scanned.
+- Blast-radius traversal defaults to two dependency hops and can be configured up to five.
+- Deleted source files cause an explicit incomplete-analysis result because they are absent from the head checkout.
+- Unsupported languages remain visible in the pull-request change totals but do not contribute dependency edges.
 
-Create `.github/workflows/codescope.yml` in your repository:
+## Quick start
+
+Create `.github/workflows/codescope.yml` in the repository that CodeScope should analyze:
 
 ```yaml
-name: CodeScope PR Visualizer
+name: CodeScope merge readiness
 
 on:
   pull_request:
@@ -52,110 +68,136 @@ permissions:
   pull-requests: write
 
 jobs:
-  visualize:
-    name: Generate PR Diagram
+  codescope:
     runs-on: ubuntu-latest
     steps:
-      - name: Run CodeScope
-        uses: shivamshinde123/CodeScope@master
+      - uses: actions/checkout@v4
         with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: shivamshinde123/CodeScope@master
 ```
 
-That's it. Open a PR and the diagram appears automatically.
+The full checkout history is required so CodeScope can compare new dependency edges with the pull request base revision. `persist-credentials: false` prevents the checkout from leaving the GitHub token in local Git configuration.
 
-### Optional: Customize the Claude model
+No external AI API key is required. All v2 findings are deterministic.
 
-```yaml
-      - name: Run CodeScope
-        uses: shivamshinde123/CodeScope@master
-        with:
-          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
-          model: "claude-sonnet-4-20250514"
+### Fork pull requests
+
+GitHub gives workflows from public forks a read-only token and withholds repository secrets. CodeScope can analyze those checkouts, but it may be unable to create or update the pull-request comment. Do not switch to `pull_request_target` and execute or install code from an untrusted pull request. Repositories that accept fork contributions should choose a separately reviewed publishing workflow or use the workflow log until a safer first-class publishing option is added.
+
+## Repository policy
+
+Architecture rules and optional test mappings live in `.codescope.toml` on the pull request base branch. Reading policy from the base branch prevents a pull request from weakening its own review rules.
+
+```toml
+[analysis]
+max_depth = 2
+ignore = ["generated/**", "vendor/**"]
+
+[architecture]
+forbid_cycles = true
+
+[[architecture.forbid]]
+id = "ui-data-boundary"
+from = "src/ui/**"
+to = "src/data/**"
+reason = "UI code must access data through the service layer."
+
+[[architecture.exceptions]]
+rule = "ui-data-boundary"
+from = "src/ui/legacy.py"
+to = "src/data/legacy.py"
+reason = "Temporary migration exception tracked by issue 123."
+
+[[tests.map]]
+source = "src/payments/**"
+tests = ["tests/payments/**", "tests/integration/payment_*.py"]
 ```
 
-## How to Test It
+### Policy fields
 
-1. Add `ANTHROPIC_API_KEY` as a secret in your repo
-2. Push the workflow file above to your default branch (main/master)
-3. Create a new branch, change a few files, and open a PR
-4. Check the **Actions** tab to watch the workflow run
-5. Once complete, a Mermaid diagram comment appears on the PR
+| Field | Meaning |
+|---|---|
+| `analysis.max_depth` | Maximum reverse-dependency hops shown in blast radius, from 1 to 5 |
+| `analysis.ignore` | Repository-relative glob patterns excluded from source discovery |
+| `architecture.forbid_cycles` | Reports a new dependency edge that closes a cycle |
+| `architecture.forbid` | Explicit source-to-target dependency rules |
+| `architecture.exceptions` | Narrow, documented exemptions from a rule or cycle check |
+| `tests.map` | Optional source and test globs that supplement import-based test discovery |
 
-## Configuration
+Invalid policy never silently passes. CodeScope marks the analysis incomplete and explains the configuration error.
 
-| Input | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `anthropic-api-key` | Yes | — | Anthropic API key for Claude |
-| `github-token` | No | Auto-provided | GitHub token for API access |
-| `model` | No | `claude-sonnet-4-20250514` | Claude model to use |
+## Merge-readiness states
 
-## Example Diagram
+| State | Meaning |
+|---|---|
+| `Ready for review` | No high-confidence action was found; this is not a safety guarantee |
+| `Needs targeted review` | Indirectly affected production code deserves reviewer attention |
+| `Missing required evidence` | A changed production file lacks mapped tests or a new architecture violation exists |
+| `Analysis incomplete` | CodeScope could not inspect enough evidence to make the other states useful |
 
-![CodeScope diagram example](assets/codescope-diagram-example.png)
+CodeScope does not emit an opaque numerical risk score. Every action links back to a dependency path, test mapping, architecture rule, or explicit analysis limit.
 
-## What the Diagram Shows
+## How it works
 
-- **Directory hierarchy** — Files grouped by directory using Mermaid subgraphs
-- **Line change counts** — Each node shows additions/deletions
-- **File relationships** — Edges between related files (same directory, test ↔ source, etc.)
-- **Color-coded nodes by modification type:**
+```mermaid
+flowchart LR
+  A[Pull request event] --> B[Parse changed files]
+  B --> C[Read repository source as text]
+  C --> D[Build local dependency graph]
+  D --> E[Calculate reverse blast radius]
+  D --> F[Map tests]
+  D --> G[Check base branch architecture policy]
+  E --> H[Merge readiness brief]
+  F --> H
+  G --> H
+  H --> I[Update one PR comment]
+```
 
-| Color | Meaning | Hex |
-|-------|---------|-----|
-| 🟢 Green | Added | `#2ea44f` |
-| 🟠 Orange | Modified | `#e36209` |
-| 🔴 Red | Deleted | `#cb2431` |
-| 🔵 Blue | Renamed | `#0366d6` |
+The analyzer does not run project builds, package installation, test commands, or imported repository modules. It installs and runs only CodeScope's own locked Python dependencies in the action directory.
 
-## Graceful Degradation
+## Local development
 
-If the Claude API is unavailable, CodeScope posts a text-only table summary instead of failing the action. GitHub API errors are treated as critical failures.
+Requirements:
 
-## Development
-
-### Prerequisites
-
-- Python 3.12+
-- [uv](https://docs.astral.sh/uv/) package manager
-
-### Run tests
+- Python 3.12 or later
+- [uv](https://docs.astral.sh/uv/)
 
 ```bash
 uv sync
-uv run pytest tests/ -v
+uv run pytest -q
 ```
 
-## Project Structure
+Project-specific product, architecture, configuration, and release decisions are maintained in [`docs/`](docs/).
 
-```
-CodeScope/
-├── .github/workflows/codescope.yml   # GitHub Actions workflow
-├── src/
-│   ├── main.py                       # Pipeline orchestrator
-│   ├── diff_parser.py                # Fetches & parses PR diffs
-│   ├── claude_analyzer.py            # Claude API → Mermaid diagrams
-│   └── github_commenter.py           # Posts/updates PR comments
-├── tests/                            # Unit tests (28 tests)
-├── action.yml                        # Composite action metadata
-└── pyproject.toml                    # Dependencies (uv)
-```
+## Data and privacy
 
-## Disclaimer
+CodeScope v2 reads the checked-out repository, pull-request diff metadata, and the base revision inside the GitHub-hosted runner. It sends requests to the GitHub API to fetch the diff and create or update its comment. It does not send source code or repository metadata to an AI provider, does not use analytics or advertising, and does not operate a separate CodeScope backend.
 
-This software is provided **"as is"**, without warranty of any kind. By using CodeScope, you acknowledge that:
+GitHub retains workflow logs and pull-request comments under the repository owner's GitHub settings and agreement. CodeScope itself creates no account and stores no additional user data. Repository owners remain responsible for reviewing their GitHub configuration, installed action versions, and dependency policies.
 
-- **PR diff metadata** (file names, paths, line counts) is sent to the Anthropic API for analysis. No source code content is sent.
-- **You are responsible** for your own Anthropic API key and any associated costs.
-- The authors are **not liable** for any damages, incorrect diagrams, failed workflows, or issues arising from the use of this action.
-- AI-generated diagrams are approximate visualizations, not authoritative representations of your codebase.
+## Security
 
-See the [LICENSE](LICENSE) file for the full MIT license terms.
+- Use the minimum workflow permissions shown above.
+- Keep the policy file on the base branch authoritative.
+- Do not use privileged workflow events to execute untrusted pull-request code.
+- Pin CodeScope and other third-party actions to a reviewed commit SHA for higher-assurance environments.
+- Treat the generated report as review assistance, not proof of correctness or security.
 
-## Inspiration
+Report security concerns through the repository's GitHub issue tracker without including secrets or private source code. A dedicated private security contact is TBD.
 
-Inspired by [Marlene Mhangami](https://github.com/marlenezw)'s work on visualizing PR changes using Excalidraw MCP and the GitHub Copilot SDK.
+## Limitations
+
+- Import extraction does not resolve every framework alias, runtime import, reflection mechanism, generated dependency, or cross-repository call.
+- Test mapping identifies evidence; it does not determine whether assertions are sufficient.
+- Architecture rules are useful only when maintainers define accurate boundaries.
+- Large monorepositories may require future incremental indexing.
+- Cross-repository blast radius and organization-wide policies are outside the v2 MVP.
 
 ## License
 
-[MIT](LICENSE)
+CodeScope is released under the [MIT License](LICENSE). Third-party dependencies retain their own licenses.
+
+This software is provided as-is, without warranty. Findings are advisory and may be incomplete or incorrect.

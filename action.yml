@@ -1,46 +1,44 @@
-name: "CodeScope PR Visualizer"
-description: "Automatically generate visual Mermaid diagrams for pull requests to help reviewers understand the scope of changes."
+name: "CodeScope Merge Readiness"
+description: "Analyze pull-request blast radius, test evidence, and architecture drift without executing repository code."
 author: "shivamshinde123"
 
 inputs:
   github-token:
-    description: "GitHub token for API access (automatically provided)"
+    description: "GitHub token used to read the pull request and update one CodeScope comment"
     required: true
     default: ${{ github.token }}
-  anthropic-api-key:
-    description: "Anthropic API key for Claude"
-    required: true
-  model:
-    description: "Claude model to use for analysis"
+  config-path:
+    description: "Repository-relative path to the trusted CodeScope policy on the pull request base branch"
     required: false
-    default: "claude-sonnet-4-20250514"
+    default: ".codescope.toml"
 
 runs:
   using: "composite"
   steps:
-    - name: Install uv
-      uses: astral-sh/setup-uv@v4
-      with:
-        version: "latest"
-
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: "3.12"
 
-    - name: Install dependencies
-      shell: bash
-      run: cd "${{ github.action_path }}" && uv sync
+    - name: Install uv
+      uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+      with:
+        version: "0.8.22"
 
-    - name: Run CodeScope
+    - name: Install CodeScope dependencies
+      shell: bash
+      run: uv sync --project "${{ github.action_path }}" --no-dev
+
+    - name: Analyze pull request
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
-        ANTHROPIC_API_KEY: ${{ inputs.anthropic-api-key }}
         GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+        GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         PR_NUMBER: ${{ github.event.pull_request.number }}
-        INPUT_MODEL: ${{ inputs.model }}
-      run: cd "${{ github.action_path }}" && PYTHONPATH="${{ github.action_path }}" uv run python src/main.py
+        CODESCOPE_CONFIG: ${{ inputs.config-path }}
+      run: PYTHONPATH="${{ github.action_path }}" uv run --project "${{ github.action_path }}" python "${{ github.action_path }}/src/main.py"
 
 branding:
   icon: "git-pull-request"

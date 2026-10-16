@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CodeScope turns pull-request changes into evidence-backed blast radius, test coverage, and architecture drift guidance.">
+  <meta name="theme-color" content="#101b2b">
+  <meta property="og:title" content="CodeScope — review the impact, not just the diff">
+  <meta property="og:description" content="A deterministic GitHub Action for evidence-backed merge readiness.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shivamshinde123.github.io/CodeScope/">
+  <title>CodeScope — Evidence-backed pull request reviews</title>
+  <link rel="canonical" href="https://shivamshinde123.github.io/CodeScope/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101b2b'/%3E%3Cpath d='M18 19h28v8H26v18h20v8H18z' fill='%23d7ff53'/%3E%3C/svg%3E">
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="top-rule" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="CodeScope home"><span class="brand-mark" aria-hidden="true">C</span><span>CodeScope</span><span class="version">v2</span></a>
+    <nav aria-label="Primary navigation">
+      <a href="#signals">Signals</a><a href="#workflow">How it works</a><a href="#trust">Trust</a>
+      <a class="nav-cta" href="https://github.com/shivamshinde123/CodeScope">View on GitHub <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><span></span> Pull request decision support</p>
+        <h1>Review the <em>impact</em>,<br>not just the diff.</h1>
+        <p class="hero-lede">CodeScope shows what could break, what evidence is missing, and which architecture rule changed—before a reviewer clicks approve.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#install">Add to a repository</a>
+          <a class="button button-secondary" href="https://github.com/shivamshinde123/CodeScope">Explore the source <span aria-hidden="true">→</span></a>
+        </div>
+        <ul class="proof-strip" aria-label="Product properties">
+          <li><strong>0</strong><span>API keys</span></li><li><strong>1</strong><span>stable PR comment</span></li><li><strong>100%</strong><span>evidence-linked</span></li>
+        </ul>
+      </div>
+      <div class="review-stage reveal delay-1" aria-label="Example CodeScope pull request report">
+        <div class="stage-label">LIVE REVIEW BRIEF / PR #184</div>
+        <article class="review-card">
+          <div class="review-header"><div><p class="micro">CODESCOPE MERGE READINESS</p><h2>Missing required evidence</h2></div><span class="status-dot" aria-label="Action required"></span></div>
+          <p class="change-count"><strong>8</strong> files changed <span>+140 / −32 lines</span></p>
+          <section class="report-section"><div class="section-number">01</div><div><h3>Blast radius</h3><div class="impact-path" aria-label="service.py depends on changed core.py"><span>service.py</span><i aria-hidden="true"></i><span class="changed">core.py</span></div><p>One indirect production dependency needs review.</p></div></section>
+          <section class="report-section"><div class="section-number">02</div><div><h3>Test evidence</h3><p><code>core.py</code> <span class="tag tag-warn">NO MAPPED TEST</span></p></div></section>
+          <section class="report-section"><div class="section-number">03</div><div><h3>Architecture rule</h3><p><code>ui.py</code> now imports <code>data.py</code></p><p class="rule-note">layers / use the service boundary</p></div></section>
+          <div class="action-row"><span aria-hidden="true">□</span> Add or map a test for <code>core.py</code></div>
+        </article>
+        <div class="stage-note">Evidence first. Diagram second. No opaque score.</div>
+      </div>
+    </section>
+    <section class="signals section" id="signals">
+      <div class="section-intro reveal"><p class="eyebrow"><span></span> Three signals, one decision</p><h2>A reviewer brief that earns its space.</h2><p>Every warning carries a path, mapping, rule, or explicit limit. If CodeScope cannot prove the evidence, it says so.</p></div>
+      <div class="signal-grid">
+        <article class="signal-card reveal"><span class="card-index">01 / IMPACT</span><div class="signal-icon radius-icon" aria-hidden="true"><b></b><b></b><b></b></div><h3>Blast radius</h3><p>Trace direct and transitive dependents of changed production files, with the exact import path that connects them.</p><span class="card-foot">Bounded to 1–5 hops</span></article>
+        <article class="signal-card dark reveal delay-1"><span class="card-index">02 / EVIDENCE</span><div class="signal-icon test-icon" aria-hidden="true">✓<span>?</span></div><h3>Missing tests</h3><p>Find import-based tests and declared test mappings. Flag changed production code when no supported test evidence exists.</p><span class="card-foot">Evidence, not coverage claims</span></article>
+        <article class="signal-card reveal delay-2"><span class="card-index">03 / BOUNDARIES</span><div class="signal-icon boundary-icon" aria-hidden="true"><b></b><i></i><b></b></div><h3>Architecture drift</h3><p>Catch new forbidden imports and dependency cycles using rules your team versions alongside the code.</p><span class="card-foot">Policy read from the base branch</span></article>
+      </div>
+    </section>
+    <section class="workflow section" id="workflow">
+      <div class="workflow-copy reveal"><p class="eyebrow light"><span></span> Deterministic by design</p><h2>From changed files to a focused review.</h2><p>CodeScope reads source text and Git history. It never imports or executes the pull request’s code.</p>
+        <ol class="steps"><li><span>1</span><div><strong>Parse the change</strong><p>Collect file paths, additions, deletions, and change types.</p></div></li><li><span>2</span><div><strong>Build the local graph</strong><p>Extract Python, JavaScript, TypeScript, JSX, and TSX imports.</p></div></li><li><span>3</span><div><strong>Compare the evidence</strong><p>Calculate impact, map tests, and check base-branch rules.</p></div></li><li><span>4</span><div><strong>Update one comment</strong><p>Present the state, evidence, actions, and optional Mermaid map.</p></div></li></ol>
+      </div>
+      <div class="graph-panel reveal delay-1" aria-label="Interactive dependency evidence example"><p class="micro">DEPENDENCY EVIDENCE / HOVER OR FOCUS A NODE</p><div class="graph" role="group" aria-label="Dependency path from API to core"><button class="node node-api" data-detail="The API handler is indirectly affected through service.py.">api.py</button><button class="node node-service" data-detail="service.py imports the changed core module.">service.py</button><button class="node node-core changed" data-detail="core.py changed in this pull request.">core.py <small>CHANGED</small></button><span class="edge edge-one" aria-hidden="true"></span><span class="edge edge-two" aria-hidden="true"></span></div><p class="graph-detail" aria-live="polite">Choose a node to inspect its evidence.</p></div>
+    </section>
+    <section class="install section" id="install">
+      <div class="install-copy reveal"><p class="eyebrow"><span></span> Two-minute setup</p><h2>One workflow.<br>No AI secret.</h2><p>Install the Action with least-privilege permissions. Add <code>.codescope.toml</code> only when your team is ready to define boundaries.</p><a class="text-link" href="https://github.com/shivamshinde123/CodeScope#quick-start">Read the complete setup guide <span aria-hidden="true">→</span></a></div>
+      <div class="code-window reveal delay-1"><div class="code-bar"><span></span><span></span><span></span><b>codescope.yml</b><button class="copy-button" type="button" data-copy-target="install-code">Copy</button></div><pre id="install-code"><code><span class="c-key">permissions:</span>
+  <span class="c-key">contents:</span> read
+  <span class="c-key">pull-requests:</span> write
+
+<span class="c-key">jobs:</span>
+  <span class="c-key">codescope:</span>
+    <span class="c-key">runs-on:</span> ubuntu-latest
+    <span class="c-key">steps:</span>
+      - <span class="c-key">uses:</span> actions/checkout@v4
+        <span class="c-key">with:</span>
+          <span class="c-key">fetch-depth:</span> 0
+          <span class="c-key">persist-credentials:</span> false
+      - <span class="c-key">uses:</span> shivamshinde123/CodeScope@master</code></pre></div>
+    </section>
+    <section class="trust section" id="trust">
+      <div class="trust-statement reveal"><p class="eyebrow light"><span></span> Trust is a product feature</p><blockquote>“A clean result is guidance,<br>not proof that a change is safe.”</blockquote></div>
+      <div class="trust-list reveal delay-1"><div><span>01</span><p><strong>Local analysis</strong>Source stays inside the GitHub runner and is not sent to an AI provider.</p></div><div><span>02</span><p><strong>Base-branch policy</strong>A pull request cannot weaken the architecture rules evaluating itself.</p></div><div><span>03</span><p><strong>Explicit limits</strong>Unsupported, deleted, or bounded evidence produces an incomplete state—not a silent pass.</p></div><div><span>04</span><p><strong>Accessible output</strong>Text contains the full finding; color and Mermaid diagrams are supporting cues.</p></div></div>
+    </section>
+    <section class="final-cta section reveal"><p class="eyebrow"><span></span> Make the next review count</p><h2>Give reviewers a map,<br>not another metric.</h2><div><a class="button button-primary" href="https://github.com/shivamshinde123/CodeScope">Get CodeScope on GitHub <span aria-hidden="true">↗</span></a><p>Open source · MIT licensed · No external AI key</p></div></section>
+  </main>
+  <footer><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true">C</span><span>CodeScope</span></a><p>Evidence-backed merge readiness for GitHub pull requests.</p><div><a href="https://github.com/shivamshinde123/CodeScope">GitHub</a><a href="https://github.com/shivamshinde123/CodeScope/issues">Support</a><a href="https://github.com/shivamshinde123/CodeScope/blob/master/LICENSE">MIT License</a></div></footer>
+</body>
+</html>
