@@ -1,5 +1,17 @@
 # System Architecture Document
 
+## Public website boundary
+
+The GitHub Pages site is a separate static presentation surface. It links to repository documentation and installation instructions but does not invoke the Action, inspect repositories, accept user input, or store data.
+
+```mermaid
+flowchart LR
+  Visitor[Browser] --> Pages[GitHub Pages static files]
+  Pages --> Repository[CodeScope GitHub repository]
+  Merge[Merge to master] --> Workflow[Pages deployment workflow]
+  Workflow --> Pages
+```
+
 ## Context
 
 ```mermaid

@@ -1,5 +1,23 @@
 # UI and UX Wireframes
 
+## Public website flow
+
+```text
+Navigation
+  ↓
+Reviewer problem + realistic CodeScope brief
+  ↓
+Blast radius / test evidence / architecture drift
+  ↓
+Deterministic analysis flow + interactive evidence path
+  ↓
+Installation snippet
+  ↓
+Trust model + GitHub call to action
+```
+
+The site uses a warm editorial “review desk” aesthetic: paper, ink, annotation colors, hard borders, and evidence-path geometry. All interactions support keyboard focus, essential content remains available without JavaScript, and motion is removed when the visitor requests reduced motion.
+
 ## Pull request comment
 
 ```text

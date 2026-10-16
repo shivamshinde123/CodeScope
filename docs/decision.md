@@ -1,5 +1,13 @@
 # Decision Record
 
+## 2026-10-16 — Publish a static GitHub Pages product site
+
+**Decision:** Ship a dependency-free site from `site/` through GitHub's official Pages workflow after changes reach `master`.
+
+**Why:** The site explains the reviewer problem and v2 evidence model without introducing a hosted application, database, analytics, cookies, forms, or another vendor. GitHub Pages fits the existing open-source distribution channel.
+
+**Tradeoff:** Pull requests do not receive automatic site previews, and the public URL updates only after merge. This is preferred to granting broader deployment permissions or adding another hosting service.
+
 ## 2026 10 16 Keep CodeScope as a GitHub Action
 
 CodeScope v2 will remain a composite GitHub Action. A GitHub App, hosted backend, organization dashboard, and cross-repository intelligence are deferred. The Action is sufficient to validate reviewer value with lower operational and security complexity.

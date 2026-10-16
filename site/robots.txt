@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://shivamshinde123.github.io/CodeScope/sitemap.xml

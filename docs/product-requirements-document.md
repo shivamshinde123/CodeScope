@@ -69,6 +69,16 @@ These metrics measure reviewer usefulness, not model accuracy alone. Revert and 
 
 GitHub App infrastructure, cross-repository graphs, reviewer assignment, line-by-line code review, automated approval, hosted analytics, and historical incident learning are outside the v2 MVP.
 
+## Public website requirements
+
+- Explain CodeScope's reviewer value before implementation detail.
+- Demonstrate the merge-readiness brief and its three evidence signals.
+- Link directly to installation and source documentation.
+- Work without JavaScript for all essential content and navigation.
+- Respect reduced-motion preferences and support keyboard navigation, zoom, and screen readers.
+- Use no analytics, cookies, forms, external fonts, or third-party runtime scripts.
+- Deploy only from `master` to the GitHub Pages environment.
+
 ## Acceptance criteria
 
 - Every impact and architecture warning has inspectable evidence.

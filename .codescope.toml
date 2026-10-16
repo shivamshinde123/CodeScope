@@ -14,3 +14,7 @@ reason = "The GitHub publisher must not depend on repository analysis internals.
 [[tests.map]]
 source = "src/**"
 tests = ["tests/**"]
+
+[[tests.map]]
+source = "site/**"
+tests = ["tests/test_site.py"]

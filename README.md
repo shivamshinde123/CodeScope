@@ -1,5 +1,7 @@
 # CodeScope
 
+**Website:** [shivamshinde123.github.io/CodeScope](https://shivamshinde123.github.io/CodeScope/)
+
 CodeScope is a GitHub Action that gives pull-request reviewers an evidence-backed merge-readiness brief. It analyzes repository text and Git history without importing or executing pull-request code.
 
 Version 2 focuses on four reviewer decisions:

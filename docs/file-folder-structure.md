@@ -1,5 +1,19 @@
 # File and Folder Structure
 
+## GitHub Pages website
+
+```text
+site/
+├── index.html       # Product landing page and semantic content
+├── styles.css       # Responsive visual design
+├── script.js        # Progressive enhancement only
+├── 404.html         # Project-site fallback
+├── robots.txt       # Crawler policy
+└── sitemap.xml      # Canonical public URL
+```
+
+The website intentionally has no package manager, build step, analytics SDK, external font request, or runtime backend.
+
 ```text
 CodeScope/
 ├── .github/workflows/codescope.yml

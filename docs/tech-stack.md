@@ -1,5 +1,14 @@
 # Technology Stack
 
+## Public website
+
+- Semantic HTML5 for a durable, crawlable document.
+- Hand-authored CSS for the visual system, responsive behavior, focus states, and reduced motion.
+- Small dependency-free JavaScript for progressive enhancement.
+- GitHub Pages and official SHA-pinned deployment actions for hosting.
+
+No frontend framework is needed because the site has one page, no application state, and no server interaction.
+
 ## Runtime
 
 - Python 3.12 or later.

@@ -1,5 +1,14 @@
 # Component Map
 
+## Public website
+
+| Component | Responsibility |
+| --- | --- |
+| `site/index.html` | Product narrative, installation entry point, semantic content, and metadata |
+| `site/styles.css` | Responsive visual system, accessible focus states, and reduced-motion behavior |
+| `site/script.js` | Progressive reveal, dependency-node explanation, and copy interaction |
+| `.github/workflows/pages.yml` | Upload and deploy `site/` to GitHub Pages from `master` |
+
 ```mermaid
 flowchart LR
   Event[GitHub pull request event] --> Main[src main]
