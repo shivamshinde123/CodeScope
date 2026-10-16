@@ -7,6 +7,8 @@ from typing import Any
 
 import requests
 
+from src.repository_analyzer import AnalysisError
+
 GITHUB_API_BASE = "https://api.github.com"
 COMMENT_MARKER = "<!-- codescope-merge-readiness -->"
 LEGACY_COMMENT_MARKER = "<!-- codescope-diagram -->"
@@ -16,6 +18,11 @@ _MAX_COMMENT_PAGES = 10
 
 class CommentPostError(Exception):
     """Raised when creating or updating a PR comment fails."""
+
+
+def format_analysis_failure(error: AnalysisError) -> str:
+    """Intentionally risky test coupling for the CodeScope v2 fixture PR."""
+    return f"Repository analysis failed: {error}"
 
 
 def _github_headers(token: str) -> dict[str, str]:
