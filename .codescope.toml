@@ -1,0 +1,16 @@
+[analysis]
+max_depth = 2
+ignore = ["examples/**"]
+
+[architecture]
+forbid_cycles = true
+
+[[architecture.forbid]]
+id = "publisher-boundary"
+from = "src/github_commenter.py"
+to = "src/repository_analyzer.py"
+reason = "The GitHub publisher must not depend on repository analysis internals."
+
+[[tests.map]]
+source = "src/**"
+tests = ["tests/**"]

@@ -1,29 +1,15 @@
-"""
-CodeScope — Main entry point.
-
-Orchestrates the PR visualization pipeline:
-1. Fetch and parse the PR diff
-2. Analyze changes with Claude to generate a Mermaid diagram
-3. Post the diagram as a PR comment
-
-Graceful degradation: if Claude API fails, a text-only summary is posted
-instead of a Mermaid diagram.  GitHub API failures are treated as critical
-and cause the action to exit with code 1.
-"""
+"""CodeScope deterministic pull-request decision pipeline."""
 
 from __future__ import annotations
 
 import logging
 import os
-import sys
+from pathlib import Path
 
-from src.claude_analyzer import ClaudeAnalysisError, MermaidValidationError, analyze_with_claude
 from src.diff_parser import DiffParseError, build_change_summary, fetch_pr_diff, parse_diff
 from src.github_commenter import CommentPostError, format_comment, post_or_update_comment
+from src.repository_analyzer import analyze_repository, build_mermaid
 
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -32,109 +18,64 @@ logging.basicConfig(
 logger = logging.getLogger("codescope")
 
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-
 def get_env_vars() -> dict[str, str]:
-    """Read and validate required environment variables.
-
-    Returns:
-        Dictionary with all configuration values.
-
-    Raises:
-        SystemExit: If required environment variables are missing.
-    """
+    """Read required GitHub context and optional analysis settings."""
     required = {
         "GITHUB_TOKEN": os.getenv("GITHUB_TOKEN"),
-        "ANTHROPIC_API_KEY": os.getenv("ANTHROPIC_API_KEY"),
         "GITHUB_REPOSITORY": os.getenv("GITHUB_REPOSITORY"),
         "PR_NUMBER": os.getenv("PR_NUMBER"),
     }
-
     missing = [key for key, value in required.items() if not value]
     if missing:
         logger.error("Missing required environment variables: %s", ", ".join(missing))
-        sys.exit(1)
-
+        raise SystemExit(1)
     return {
-        **{k: v for k, v in required.items() if v is not None},
-        "INPUT_MODEL": os.getenv("INPUT_MODEL", "claude-sonnet-4-20250514"),
+        **{key: str(value) for key, value in required.items()},
+        "GITHUB_BASE_SHA": os.getenv("GITHUB_BASE_SHA", ""),
+        "CODESCOPE_CONFIG": os.getenv("CODESCOPE_CONFIG", ".codescope.toml"),
+        "GITHUB_WORKSPACE": os.getenv("GITHUB_WORKSPACE", os.getcwd()),
     }
 
 
-# ---------------------------------------------------------------------------
-# Pipeline
-# ---------------------------------------------------------------------------
-
-def main() -> None:
-    """Run the CodeScope pipeline.
-
-    Exit codes:
-        0 — Success, or non-critical failure (Claude unavailable, diagram
-            generation failed — a text fallback was posted instead).
-        1 — Critical failure (missing env vars, GitHub API errors, unable
-            to post the comment at all).
-    """
-    logger.info("Starting CodeScope PR visualization pipeline")
-
-    # ---- Step 0: Load configuration ----------------------------------------
-    config = get_env_vars()
+def run_pipeline(config: dict[str, str]) -> str:
+    """Run analysis and return the comment body (separable for testing)."""
     repo = config["GITHUB_REPOSITORY"]
     pr_number = int(config["PR_NUMBER"])
     token = config["GITHUB_TOKEN"]
-    api_key = config["ANTHROPIC_API_KEY"]
-    model = config["INPUT_MODEL"]
-
-    logger.info("Processing PR #%d in %s (model: %s)", pr_number, repo, model)
-
-    # ---- Step 1: Fetch and parse the PR diff --------------------------------
-    logger.info("Step 1: Fetching and parsing PR diff...")
-    try:
-        raw_diff = fetch_pr_diff(repo, pr_number, token)
-        parsed_files = parse_diff(raw_diff)
-        change_summary = build_change_summary(parsed_files)
-    except DiffParseError as exc:
-        logger.error("Failed to fetch/parse PR diff: %s", exc)
-        sys.exit(1)
-    except Exception as exc:
-        logger.error("Unexpected error during diff parsing: %s", exc)
-        sys.exit(1)
-
-    logger.info(
-        "Parsed %d changed file(s) (%d additions, %d deletions)",
-        change_summary["total_files"],
-        change_summary["total_additions"],
-        change_summary["total_deletions"],
+    raw_diff = fetch_pr_diff(repo, pr_number, token)
+    parsed_files = parse_diff(raw_diff)
+    change_summary = build_change_summary(parsed_files)
+    report = analyze_repository(
+        Path(config["GITHUB_WORKSPACE"]),
+        change_summary["files"],
+        base_sha=config.get("GITHUB_BASE_SHA", ""),
+        config_path=config.get("CODESCOPE_CONFIG", ".codescope.toml"),
     )
+    if change_summary.get("is_truncated"):
+        report["incomplete_reasons"].append(change_summary["truncation_note"])
+        report["state"] = "Analysis incomplete"
+    return format_comment(report, change_summary, build_mermaid(report))
 
-    # ---- Step 2: Analyze with Claude ----------------------------------------
-    logger.info("Step 2: Analyzing changes with Claude...")
-    mermaid_code: str | None = None
 
+def main() -> None:
+    """Analyze a pull request and update CodeScope's stable comment."""
+    logger.info("Starting CodeScope merge-readiness analysis")
+    config = get_env_vars()
     try:
-        mermaid_code = analyze_with_claude(change_summary, api_key, model)
-        logger.info("Mermaid diagram generated successfully")
-    except (ClaudeAnalysisError, MermaidValidationError) as exc:
-        # Non-critical: fall back to text summary.
-        logger.warning("Claude analysis failed — falling back to text summary: %s", exc)
+        comment_body = run_pipeline(config)
+        post_or_update_comment(
+            config["GITHUB_REPOSITORY"],
+            int(config["PR_NUMBER"]),
+            config["GITHUB_TOKEN"],
+            comment_body,
+        )
+    except (DiffParseError, CommentPostError, ValueError) as exc:
+        logger.error("CodeScope failed: %s", exc)
+        raise SystemExit(1) from exc
     except Exception as exc:
-        logger.warning("Unexpected error during Claude analysis — using fallback: %s", exc)
-
-    # ---- Step 3: Post comment on PR -----------------------------------------
-    logger.info("Step 3: Posting diagram to PR...")
-    comment_body = format_comment(mermaid_code, change_summary)
-
-    try:
-        post_or_update_comment(repo, pr_number, token, comment_body)
-    except CommentPostError as exc:
-        logger.error("Failed to post comment: %s", exc)
-        sys.exit(1)
-    except Exception as exc:
-        logger.error("Unexpected error while posting comment: %s", exc)
-        sys.exit(1)
-
-    logger.info("CodeScope pipeline completed successfully")
+        logger.exception("Unexpected CodeScope failure: %s", exc)
+        raise SystemExit(1) from exc
+    logger.info("CodeScope analysis completed successfully")
 
 
 if __name__ == "__main__":
