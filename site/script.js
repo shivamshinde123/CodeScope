@@ -20,10 +20,11 @@ document.querySelectorAll('.node').forEach((node) => {
   node.addEventListener('focus', showDetail);
   node.addEventListener('click', showDetail);
 });
-const copyButton = document.querySelector('.copy-button');
-copyButton?.addEventListener('click', async () => {
-  const target = document.getElementById(copyButton.dataset.copyTarget);
-  try { await navigator.clipboard.writeText(target.innerText); copyButton.textContent = 'Copied'; }
-  catch { copyButton.textContent = 'Select text'; }
-  window.setTimeout(() => { copyButton.textContent = 'Copy'; }, 1800);
+document.querySelectorAll('.copy-button').forEach((copyButton) => {
+  copyButton.addEventListener('click', async () => {
+    const target = document.getElementById(copyButton.dataset.copyTarget);
+    try { await navigator.clipboard.writeText(target.innerText); copyButton.textContent = 'Copied'; }
+    catch { copyButton.textContent = 'Select text'; }
+    window.setTimeout(() => { copyButton.textContent = 'Copy'; }, 1800);
+  });
 });

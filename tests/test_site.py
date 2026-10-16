@@ -56,6 +56,17 @@ def test_content_remains_visible_without_javascript() -> None:
     assert "prefers-reduced-motion:reduce" in css
 
 
+def test_how_to_use_section_covers_install_configure_and_review() -> None:
+    source, parser = _document()
+    ids = {attrs.get("id") for _, attrs in parser.tags if attrs.get("id")}
+    assert {"install", "install-code", "policy-code"} <= ids
+    assert "Add the workflow" in source
+    assert "Declare your boundaries" in source
+    assert "Open a pull request" in source
+    assert "Missing required evidence" in source
+    assert source.count('class="copy-button"') == 2
+
+
 def test_pages_workflow_is_scoped_and_sha_pinned() -> None:
     workflow = (ROOT / ".github" / "workflows" / "pages.yml").read_text(encoding="utf-8")
     assert "branches: [master]" in workflow
