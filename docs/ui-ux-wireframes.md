@@ -7,9 +7,9 @@ Navigation
   ↓
 Reviewer problem + realistic CodeScope brief
   ↓
-Blast radius / test evidence / architecture drift
+What else could break? / Is a test linked? / Did code break a team rule?
   ↓
-Deterministic analysis flow + interactive evidence path
+Four short steps and an interactive example of linked files
   ↓
 Installation snippet
   ↓
@@ -18,7 +18,7 @@ Trust model + GitHub call to action
 
 The installation section is a three-step operational guide: add the workflow, optionally define base-branch policy, and interpret the pull-request state. Workflow and policy examples have independent copy controls, while every instruction remains visible without JavaScript.
 
-The site uses a warm editorial “review desk” aesthetic: paper, ink, annotation colors, hard borders, and evidence-path geometry. All interactions support keyboard focus, essential content remains available without JavaScript, and motion is removed when the visitor requests reduced motion.
+The site uses a warm editorial "review desk" look with paper, ink, note colors, and hard borders. The interactive dependency diagram uses plain labels and explains each file link in text. All controls support keyboard focus. All key content works without JavaScript. The site removes motion when the visitor requests reduced motion.
 
 ## Pull request comment
 

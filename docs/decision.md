@@ -1,5 +1,13 @@
 # Decision Record
 
+## 2026-10-17: Use plain language on the public website
+
+**Decision:** Lead with the question a reviewer asks, then name the CodeScope term only when the name helps. Keep the interactive dependency diagram and rewrite its labels in common words.
+
+**Why:** Terms such as "blast radius," "test evidence," and "architecture drift" made readers decode the product before they could understand it. The website now explains affected files, linked tests, and team rules in common words. The pull-request comment can still include its optional Mermaid diagram.
+
+**Tradeoff:** The diagram still asks readers to understand file links. Its heading, button text, and detail text now explain those links without product jargon.
+
 ## 2026-10-16 — Prepare release 2.1.0 as a documentation and website update
 
 **Decision:** Bump the package metadata and public website to 2.1.0 while leaving the deterministic analysis engine unchanged.

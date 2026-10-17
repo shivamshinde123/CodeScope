@@ -62,19 +62,23 @@ def test_how_to_use_section_covers_install_configure_and_review() -> None:
     ids = {attrs.get("id") for _, attrs in parser.tags if attrs.get("id")}
     assert {"install", "install-code", "policy-code"} <= ids
     assert "Add the workflow" in source
-    assert "Declare your boundaries" in source
+    assert "Add team rules" in source
     assert "Open a pull request" in source
-    assert "Missing required evidence" in source
+    assert "More work needed" in source
     assert source.count('class="copy-button"') == 2
 
 
-def test_dependency_graph_uses_bounded_svg_connectors() -> None:
+def test_site_explains_checks_and_dependency_diagram_in_plain_language() -> None:
     source, parser = _document()
-    classes = {attrs.get("class") for _, attrs in parser.tags if attrs.get("class")}
-    assert {"graph-edge graph-edge-one", "graph-edge graph-edge-two"} <= classes
-    assert 'class="edge edge-one"' not in source
-    assert 'class="edge edge-two"' not in source
+    script = (SITE / "script.js").read_text(encoding="utf-8")
+    assert "What else could break?" in source
+    assert "Is a test linked?" in source
+    assert "Did the code break a team rule?" in source
+    assert ".codescope.toml" in source
+    assert 'class="graph-panel' in source
+    assert "HOW THESE FILES ARE LINKED" in source
     assert source.count("marker-end=") == 2
+    assert "graphDetail" in script
 
 
 def test_release_version_is_consistent() -> None:
