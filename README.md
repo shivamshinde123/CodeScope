@@ -2,6 +2,8 @@
 
 **Website:** [shivamshinde123.github.io/CodeScope](https://shivamshinde123.github.io/CodeScope/)
 
+**Current release:** `2.1.0`
+
 CodeScope is a GitHub Action that gives pull-request reviewers an evidence-backed merge-readiness brief. It analyzes repository text and Git history without importing or executing pull-request code.
 
 Version 2 focuses on four reviewer decisions:
@@ -12,6 +14,12 @@ Version 2 focuses on four reviewer decisions:
 - **Merge readiness:** What deserves human attention before approval?
 
 The result is one stable pull-request comment with a compact text summary and an optional Mermaid impact diagram. CodeScope is advisory: a clean result does not prove that a change is safe.
+
+## What's new in 2.1.0
+
+- Added a complete website guide for installing the Action, declaring optional policy, and interpreting review states.
+- Corrected the interactive dependency example so its arrows terminate at the related nodes at desktop and mobile sizes.
+- Kept the analysis engine and its deterministic evidence model unchanged from 2.0.0.
 
 ## Reviewer output
 

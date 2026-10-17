@@ -16,6 +16,8 @@ Installation snippet
 Trust model + GitHub call to action
 ```
 
+The installation section is a three-step operational guide: add the workflow, optionally define base-branch policy, and interpret the pull-request state. Workflow and policy examples have independent copy controls, while every instruction remains visible without JavaScript.
+
 The site uses a warm editorial “review desk” aesthetic: paper, ink, annotation colors, hard borders, and evidence-path geometry. All interactions support keyboard focus, essential content remains available without JavaScript, and motion is removed when the visitor requests reduced motion.
 
 ## Pull request comment

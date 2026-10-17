@@ -78,6 +78,7 @@ GitHub App infrastructure, cross-repository graphs, reviewer assignment, line-by
 - Respect reduced-motion preferences and support keyboard navigation, zoom, and screen readers.
 - Use no analytics, cookies, forms, external fonts, or third-party runtime scripts.
 - Deploy only from `master` to the GitHub Pages environment.
+- Provide an operational how-to covering workflow installation, optional base-branch policy, and interpretation of all four merge-readiness states.
 
 ## Acceptance criteria
 
