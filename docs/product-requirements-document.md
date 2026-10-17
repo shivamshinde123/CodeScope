@@ -71,8 +71,11 @@ GitHub App infrastructure, cross-repository graphs, reviewer assignment, line-by
 
 ## Public website requirements
 
-- Explain CodeScope's reviewer value before implementation detail.
-- Demonstrate the merge-readiness brief and its three evidence signals.
+- Explain CodeScope with short, common words before using product terms.
+- Explain blast radius as "files that use the changed code."
+- Explain test evidence as "a test linked to the changed file."
+- State that team rules come from `.codescope.toml` on the base branch.
+- Keep the interactive dependency diagram, but explain its file links in common words.
 - Link directly to installation and source documentation.
 - Work without JavaScript for all essential content and navigation.
 - Respect reduced-motion preferences and support keyboard navigation, zoom, and screen readers.
