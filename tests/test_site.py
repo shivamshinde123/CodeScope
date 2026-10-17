@@ -1,6 +1,7 @@
 """Contract tests for the dependency-free GitHub Pages website."""
 
 import re
+import tomllib
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -65,6 +66,27 @@ def test_how_to_use_section_covers_install_configure_and_review() -> None:
     assert "Open a pull request" in source
     assert "Missing required evidence" in source
     assert source.count('class="copy-button"') == 2
+
+
+def test_dependency_graph_uses_bounded_svg_connectors() -> None:
+    source, parser = _document()
+    classes = {attrs.get("class") for _, attrs in parser.tags if attrs.get("class")}
+    assert {"graph-edge graph-edge-one", "graph-edge graph-edge-two"} <= classes
+    assert 'class="edge edge-one"' not in source
+    assert 'class="edge edge-two"' not in source
+    assert source.count("marker-end=") == 2
+
+
+def test_release_version_is_consistent() -> None:
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    version = project["project"]["version"]
+    source, _ = _document()
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    lock = (ROOT / "uv.lock").read_text(encoding="utf-8")
+    assert version == "2.1.0"
+    assert '<span class="version">v2.1</span>' in source
+    assert f"**Current release:** `{version}`" in readme
+    assert f'name = "codescope"\nversion = "{version}"' in lock
 
 
 def test_pages_workflow_is_scoped_and_sha_pinned() -> None:

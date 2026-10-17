@@ -1,5 +1,13 @@
 # Decision Record
 
+## 2026-10-16 — Prepare release 2.1.0 as a documentation and website update
+
+**Decision:** Bump the package metadata and public website to 2.1.0 while leaving the deterministic analysis engine unchanged.
+
+**Why:** The release adds the end-to-end usage guide and corrects the dependency-evidence visualization. A minor version communicates a backward-compatible product improvement without implying new analysis behavior.
+
+**Tradeoff:** The version is prepared on the pull-request branch and is not considered published until the pull request is merged and the corresponding release is created.
+
 ## 2026-10-16 — Publish a static GitHub Pages product site
 
 **Decision:** Ship a dependency-free site from `site/` through GitHub's official Pages workflow after changes reach `master`.
