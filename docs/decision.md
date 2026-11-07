@@ -51,3 +51,8 @@ CodeScope reads text and Git objects only. It does not install target-repository
 ## 2026 10 16 Defer persistent storage
 
 The Action uses no database. Historical learning, cross-repository graphs, reviewer workload models, and organization analytics require a later product decision.
+
+## 2026 11 07 Redesign the website as a ledger on graph paper
+
+The website moved from the warm "review desk" look to a white graph-paper ledger with green connector rails, hairline rules and monospace annotations. CodeScope's output is evidence paths between files, so a technical connector diagram explains the product better than editorial decoration. The redesign keeps every site contract: no external fonts, scripts or stylesheets, content visible without JavaScript, reduced-motion support, the bounded SVG dependency graph, two copy controls, and the release version tag. The example Mermaid diagram is now served from `site/` so the page makes no third-party image requests.
+

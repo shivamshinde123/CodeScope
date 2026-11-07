@@ -7,6 +7,7 @@ site/
 ├── index.html       # Product landing page and semantic content
 ├── styles.css       # Responsive visual design
 ├── script.js        # Progressive enhancement only
+├── codescope-diagram-example.png  # Local copy of the example Mermaid diagram
 ├── 404.html         # Project-site fallback
 ├── robots.txt       # Crawler policy
 └── sitemap.xml      # Canonical public URL

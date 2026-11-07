@@ -13,12 +13,14 @@ Deterministic analysis flow + interactive evidence path
   ↓
 Installation snippet
   ↓
+Known analysis limits
+  ↓
 Trust model + GitHub call to action
 ```
 
 The installation section is a three-step operational guide: add the workflow, optionally define base-branch policy, and interpret the pull-request state. Workflow and policy examples have independent copy controls, while every instruction remains visible without JavaScript.
 
-The site uses a warm editorial “review desk” aesthetic: paper, ink, annotation colors, hard borders, and evidence-path geometry. All interactions support keyboard focus, essential content remains available without JavaScript, and motion is removed when the visitor requests reduced motion.
+The site uses a "ledger on graph paper" aesthetic (design reference: Modern Treasury on Refero Styles): a white canvas with a faint grid, 1px rules, green connector rails that feed the example review brief, brown monospace annotations, ice and plum evidence cards, and a forest-green footer. Display type uses a system sans stack at weight 400 because the site loads no external fonts. All interactions support keyboard focus, essential content remains available without JavaScript, and motion is removed when the visitor requests reduced motion.
 
 ## Pull request comment
 

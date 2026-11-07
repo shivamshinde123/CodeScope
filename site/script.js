@@ -10,9 +10,10 @@ if (reduceMotion || !('IntersectionObserver' in window)) {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.14 });
+  }, { threshold: 0.12 });
   reveals.forEach((element) => observer.observe(element));
 }
+
 const graphDetail = document.querySelector('.graph-detail');
 document.querySelectorAll('.node').forEach((node) => {
   const showDetail = () => { graphDetail.textContent = node.dataset.detail; };
@@ -20,6 +21,7 @@ document.querySelectorAll('.node').forEach((node) => {
   node.addEventListener('focus', showDetail);
   node.addEventListener('click', showDetail);
 });
+
 document.querySelectorAll('.copy-button').forEach((copyButton) => {
   copyButton.addEventListener('click', async () => {
     const target = document.getElementById(copyButton.dataset.copyTarget);
