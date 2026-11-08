@@ -5,20 +5,22 @@
 ```text
 Navigation
   ↓
-Reviewer problem + realistic CodeScope brief
+Plain-language promise + terminal-style example result (PR #184)
   ↓
-Blast radius / test evidence / architecture drift
+Three questions: affected files / linked tests / team rules
   ↓
-Deterministic analysis flow + interactive evidence path
+How the check works (4 steps) + clickable file chain
   ↓
-Installation snippet
+Optional Mermaid diagram example
   ↓
-Trust model + GitHub call to action
+How to use: workflow, team rules, result states
+  ↓
+What CodeScope does not do + GitHub call to action
 ```
 
 The installation section is a three-step operational guide: add the workflow, optionally define base-branch policy, and interpret the pull-request state. Workflow and policy examples have independent copy controls, while every instruction remains visible without JavaScript.
 
-The site uses a warm editorial “review desk” aesthetic: paper, ink, annotation colors, hard borders, and evidence-path geometry. All interactions support keyboard focus, essential content remains available without JavaScript, and motion is removed when the visitor requests reduced motion.
+The site follows the "typeset terminal on white paper" style (Refero's Vercel style reference, used for its rules only — no Vercel branding): a #fafafa paper canvas, #171717 ink, hairline rings instead of shadows, 6px corners, Geist for reading and Geist Mono for labels and code, and almost no colour. The only colour is terminal green for ✓ results and a thin spectrum rule under the header and on the final call to action. Warnings are carried by words and ✗ marks, never by colour. The copy is the plain-language wording from PR #19. All interactions support keyboard focus, essential content remains available without JavaScript, and motion is removed when the visitor requests reduced motion.
 
 ## Pull request comment
 

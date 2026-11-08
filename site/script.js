@@ -10,21 +10,33 @@ if (reduceMotion || !('IntersectionObserver' in window)) {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.14 });
+  }, { threshold: 0.12 });
   reveals.forEach((element) => observer.observe(element));
 }
+
+// File chain: choosing a file explains why it may need review.
 const graphDetail = document.querySelector('.graph-detail');
-document.querySelectorAll('.node').forEach((node) => {
-  const showDetail = () => { graphDetail.textContent = node.dataset.detail; };
+const nodes = document.querySelectorAll('.node');
+nodes.forEach((node) => {
+  const showDetail = () => {
+    graphDetail.textContent = node.dataset.detail;
+    nodes.forEach((other) => other.classList.toggle('is-active', other === node));
+  };
   node.addEventListener('mouseenter', showDetail);
   node.addEventListener('focus', showDetail);
   node.addEventListener('click', showDetail);
 });
+
+// Copy buttons on the code samples.
 document.querySelectorAll('.copy-button').forEach((copyButton) => {
   copyButton.addEventListener('click', async () => {
     const target = document.getElementById(copyButton.dataset.copyTarget);
-    try { await navigator.clipboard.writeText(target.innerText); copyButton.textContent = 'Copied'; }
-    catch { copyButton.textContent = 'Select text'; }
+    try {
+      await navigator.clipboard.writeText(target.innerText);
+      copyButton.textContent = 'Copied';
+    } catch {
+      copyButton.textContent = 'Select text';
+    }
     window.setTimeout(() => { copyButton.textContent = 'Copy'; }, 1800);
   });
 });
