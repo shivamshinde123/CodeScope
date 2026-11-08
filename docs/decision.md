@@ -51,3 +51,8 @@ CodeScope reads text and Git objects only. It does not install target-repository
 ## 2026 10 16 Defer persistent storage
 
 The Action uses no database. Historical learning, cross-repository graphs, reviewer workload models, and organization analytics require a later product decision.
+
+## 2026 11 07 Website redesign: typeset terminal on white paper
+
+Two website pull requests (#19 plain-language copy, #20 ledger/graph-paper redesign) were left unmerged and conflicted with each other, so the live site stayed on the 2.1.0 version. A single redesign replaces both. It uses the plain-language copy from #19, keeps the 2.1.0 how-to-use guide, and adds the example Mermaid diagram. The visual style follows Refero's "Vercel — typeset terminal on white paper" reference: near-monochrome, hairline rings, 6px corners, Geist and Geist Mono, and a terminal panel as the hero demo. That suits a review tool whose output is text. No Vercel branding is used. Geist is self-hosted, so the documented rule of no external font requests still holds.
+

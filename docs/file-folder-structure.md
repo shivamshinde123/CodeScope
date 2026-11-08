@@ -8,6 +8,8 @@ site/
 ├── styles.css       # Responsive visual design
 ├── script.js        # Progressive enhancement only
 ├── 404.html         # Project-site fallback
+├── fonts/           # Self-hosted Geist + Geist Mono (variable woff2, SIL OFL 1.1)
+├── codescope-diagram-example.png  # Example Mermaid diagram shown on the page
 ├── robots.txt       # Crawler policy
 └── sitemap.xml      # Canonical public URL
 ```

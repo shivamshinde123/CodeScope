@@ -5,6 +5,7 @@
 - Semantic HTML5 for a durable, crawlable document.
 - Hand-authored CSS for the visual system, responsive behavior, focus states, and reduced motion.
 - Small dependency-free JavaScript for progressive enhancement.
+- Geist and Geist Mono variable fonts, self-hosted from `site/fonts/` (SIL OFL 1.1), so the page makes no third-party requests.
 - GitHub Pages and official SHA-pinned deployment actions for hosting.
 
 No frontend framework is needed because the site has one page, no application state, and no server interaction.
