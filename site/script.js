@@ -28,7 +28,7 @@ nodes.forEach((node) => {
 });
 
 // Copy buttons on the code samples.
-document.querySelectorAll('.copy').forEach((copyButton) => {
+document.querySelectorAll('.copy-button').forEach((copyButton) => {
   copyButton.addEventListener('click', async () => {
     const target = document.getElementById(copyButton.dataset.copyTarget);
     try {

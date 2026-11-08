@@ -123,9 +123,9 @@
         <p class="eyebrow small">How these files are linked · choose a file</p>
         <div class="chain" role="group" aria-label="api.py uses service.py, which uses the changed core.py file">
           <button class="node" type="button" data-detail="api.py uses service.py, so a change farther down the chain may affect it.">api.py</button>
-          <span class="link" aria-hidden="true">uses ↓</span>
+          <span class="link" aria-hidden="true"><svg class="graph-edge graph-edge-one" width="10" height="22" viewBox="0 0 10 22"><defs><marker id="arrow-one" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z"></path></marker></defs><path d="M 5 0 L 5 16" marker-end="url(#arrow-one)"></path></svg>uses</span>
           <button class="node" type="button" data-detail="service.py uses the changed core.py file, so a reviewer should check service.py.">service.py</button>
-          <span class="link" aria-hidden="true">uses ↓</span>
+          <span class="link" aria-hidden="true"><svg class="graph-edge graph-edge-two" width="10" height="22" viewBox="0 0 10 22"><defs><marker id="arrow-two" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z"></path></marker></defs><path d="M 5 0 L 5 16" marker-end="url(#arrow-two)"></path></svg>uses</span>
           <button class="node node-changed" type="button" data-detail="core.py changed in this pull request.">core.py <span class="tag">CHANGED</span></button>
         </div>
         <p class="graph-detail mono" aria-live="polite">Choose a file to see why it may need review.</p>
@@ -157,7 +157,7 @@
           <p class="eyebrow small">01 · Install</p>
           <h3>Add the workflow</h3>
           <p>Create <code>.github/workflows/codescope.yml</code>. The full Git history lets CodeScope tell old file links from links added by the pull request.</p>
-          <div class="code"><div class="code-bar"><span class="mono">codescope.yml</span><button class="copy" type="button" data-copy-target="install-code" aria-label="Copy workflow configuration">Copy</button></div><pre id="install-code"><code><span class="k">name:</span> CodeScope
+          <div class="code"><div class="code-bar"><span class="mono">codescope.yml</span><button class="copy-button" type="button" data-copy-target="install-code" aria-label="Copy workflow configuration">Copy</button></div><pre id="install-code"><code><span class="k">name:</span> CodeScope
 <span class="k">on:</span> [pull_request]
 
 <span class="k">permissions:</span>
@@ -176,9 +176,9 @@
         </article>
         <article class="card reveal delay-1">
           <p class="eyebrow small">02 · Optional</p>
-          <h3>Add team rules</h3>
+          <h3>Declare your boundaries</h3>
           <p>Add <code>.codescope.toml</code> to the base branch, usually <code>master</code>. Use it to block file links, find loops, or say which tests cover which files.</p>
-          <div class="code"><div class="code-bar"><span class="mono">.codescope.toml</span><button class="copy" type="button" data-copy-target="policy-code" aria-label="Copy team rules">Copy</button></div><pre id="policy-code"><code><span class="k">[analysis]</span>
+          <div class="code"><div class="code-bar"><span class="mono">.codescope.toml</span><button class="copy-button" type="button" data-copy-target="policy-code" aria-label="Copy team rules">Copy</button></div><pre id="policy-code"><code><span class="k">[analysis]</span>
 max_depth = 2
 
 <span class="k">[architecture]</span>
@@ -201,7 +201,7 @@ tests = ["tests/payments/**"]</code></pre></div>
           <dl class="states">
             <div><dt><span class="state state-ok">✓</span>Ready for review</dt><dd>No clear action found. This does not prove the change is safe.</dd></div>
             <div><dt><span class="state">!</span>Check these files</dt><dd>Other files use the changed code and may need review.</dd></div>
-            <div><dt><span class="state state-dark">✗</span>More work needed</dt><dd>A linked test is missing, or the pull request breaks a team rule.</dd></div>
+            <div><dt><span class="state state-dark">✗</span>More work needed</dt><dd>Missing required evidence, such as a linked test, or the pull request breaks a team rule.</dd></div>
             <div><dt><span class="state state-dash">–</span>Check did not finish</dt><dd>A file type, deleted file, size limit, or bad setting stopped part of the check.</dd></div>
           </dl>
           <a class="text-link" href="https://github.com/shivamshinde123/CodeScope#quick-start">Read the full setup guide <span aria-hidden="true">→</span></a>
